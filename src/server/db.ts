@@ -183,6 +183,14 @@ class DatabaseManager {
     return this.data.orders[idx];
   }
 
+  public deleteOrder(id: string): Order | null {
+    const idx = this.data.orders.findIndex((o) => o.id === id || o.orderNumber === id);
+    if (idx === -1) return null;
+    const removed = this.data.orders.splice(idx, 1)[0];
+    this.persist();
+    return removed;
+  }
+
   // Settings
   public updateSettings(settings: Partial<SystemSettings>): SystemSettings {
     this.data.settings = { ...this.data.settings, ...settings };

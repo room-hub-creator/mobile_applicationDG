@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-10-27T12:21:05.751Z",
+  "lastUpdated": "2026-10-29T15:05:32.340Z",
   "users": [
     {
       "id": "usr-admin-1",
@@ -887,6 +887,19 @@
     "lowStockThreshold": 5
   },
   "passwordResets": [
+    {
+      "id": "rst-1793286327648",
+      "userId": "usr-cust-1",
+      "email": "ishipi2003@gmail.com",
+      "userName": "Innocent Ishimwe",
+      "token": "reset_1793286327648_ftdyt5s",
+      "code": "DG-940796",
+      "expiresAt": 1793287227648,
+      "used": true,
+      "emailHtml": "\n    <div style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 560px; margin: 0 auto; background-color: #0f172a; color: #f8fafc; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b;\">\n      <div style=\"background: linear-gradient(135deg, #d97706, #f59e0b); padding: 24px; text-align: center;\">\n        <div style=\"display: inline-block; background-color: #020617; color: #f59e0b; font-weight: 900; font-size: 20px; padding: 8px 16px; border-radius: 10px; letter-spacing: -0.5px;\">\n          D&amp;G E-COMMERCE RWANDA\n        </div>\n        <div style=\"color: #020617; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-top: 6px; letter-spacing: 1px;\">\n          Rwamagana Central Retail Hub &bull; Rwanda\n        </div>\n      </div>\n\n      <div style=\"padding: 28px 24px;\">\n        <h2 style=\"color: #ffffff; font-size: 18px; margin-top: 0; margin-bottom: 12px; font-weight: 700;\">\n          Muraho, Innocent Ishimwe\n        </h2>\n        \n        <p style=\"color: #cbd5e1; font-size: 14px; line-height: 1.6; margin-bottom: 20px;\">\n          We verified your account in the D&amp;G E-Commerce database associated with <strong>ishipi2003@gmail.com</strong>. Use the official 6-digit verification code below to set a new secure password.\n        </p>\n\n        <div style=\"background-color: #020617; border: 1px solid #334155; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;\">\n          <div style=\"color: #94a3b8; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px;\">\n            Your 6-Digit Password Reset Code\n          </div>\n          <div style=\"font-family: monospace; font-size: 32px; font-weight: 900; color: #fbbf24; letter-spacing: 4px;\">\n            DG-940796\n          </div>\n          <div style=\"color: #64748b; font-size: 12px; margin-top: 8px;\">\n            This verification code is valid for <strong>15 minutes</strong>.\n          </div>\n        </div>\n\n        <p style=\"color: #94a3b8; font-size: 12px; line-height: 1.5; margin-bottom: 20px;\">\n          If you did not make this request, you can safely disregard this email. Your password will remain unchanged, and your account remains secure.\n        </p>\n\n        <div style=\"border-top: 1px solid #1e293b; padding-top: 16px; font-size: 11px; color: #64748b; line-height: 1.5;\">\n          <strong>Security Notice:</strong> D&amp;G staff will never ask for your password or MoMo PIN over phone or SMS.<br/>\n          Store Contact: +250 788 456 789 &bull; Rwamagana Commercial Plaza, Eastern Province, Rwanda.\n        </div>\n      </div>\n    </div>\n  ",
+      "emailSubject": "D&G Rwanda: Password Reset Code [DG-940796]",
+      "createdAt": "2026-10-29T15:05:27.648Z"
+    },
     {
       "id": "rst-1793103665751",
       "userId": "usr-1793103660240",

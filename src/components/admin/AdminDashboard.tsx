@@ -94,6 +94,7 @@ export const AdminDashboard: React.FC = () => {
   // Users management state
   const [usersList, setUsersList] = useState<User[]>([]);
   const [userSearch, setUserSearch] = useState('');
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
   // Products management state
   const [productSearch, setProductSearch] = useState('');
@@ -519,6 +520,78 @@ export const AdminDashboard: React.FC = () => {
       }
     } catch (err) {
       showToast('Failed to update status', 'error');
+    }
+  };
+
+  // User Deletion (Admin privilege)
+  const handleDeleteUser = async (u: User) => {
+    if (u.id === currentUser?.id) {
+      showToast('You cannot delete your own currently signed-in account', 'error');
+      return;
+    }
+    if (!window.confirm(`Are you sure you want to permanently delete user "${u.name}" (${u.email}) from database?`)) return;
+    try {
+      const res = await fetch(`/api/auth/users/${u.id}`, {
+        method: 'DELETE',
+        headers: { 'x-user-role': currentUser?.role || 'admin' },
+      });
+      if (res.ok) {
+        showToast(`User ${u.name} removed from database`, 'info');
+        await fetchUsers();
+        await fetchMetrics();
+      } else {
+        const data = await res.json();
+        showToast(data.error || 'Failed to delete user', 'error');
+      }
+    } catch (err) {
+      showToast('Network error deleting user', 'error');
+    }
+  };
+
+  // User Edit Save (Admin privilege)
+  const handleSaveEditUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    try {
+      const res = await fetch(`/api/auth/users/${editingUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-role': currentUser?.role || 'admin',
+        },
+        body: JSON.stringify(editingUser),
+      });
+      if (res.ok) {
+        showToast(`User ${editingUser.name} updated successfully!`, 'success');
+        setEditingUser(null);
+        await fetchUsers();
+      } else {
+        const data = await res.json();
+        showToast(data.error || 'Failed to update user', 'error');
+      }
+    } catch (err) {
+      showToast('Network error updating user', 'error');
+    }
+  };
+
+  // Order Deletion (Admin privilege)
+  const handleDeleteOrder = async (orderId: string, orderNumber: string) => {
+    if (!window.confirm(`Are you sure you want to delete Order #${orderNumber} from database?`)) return;
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'DELETE',
+        headers: { 'x-user-role': currentUser?.role || 'admin' },
+      });
+      if (res.ok) {
+        showToast(`Order #${orderNumber} deleted`, 'info');
+        await refreshOrders();
+        await fetchMetrics();
+      } else {
+        const data = await res.json();
+        showToast(data.error || 'Failed to delete order', 'error');
+      }
+    } catch (err) {
+      showToast('Network error deleting order', 'error');
     }
   };
 
@@ -1005,17 +1078,28 @@ export const AdminDashboard: React.FC = () => {
                         </span>
                       </td>
                       <td className="p-3 text-right">
-                        <button
-                          onClick={() => {
-                            setUpdatingOrder(o);
-                            setNewStatus(o.status);
-                            setRiderName(o.assignedRider?.name || 'Emmanuel Nshimiyimana');
-                            setRiderPhone(o.assignedRider?.phone || '+250 788 777 999');
-                          }}
-                          className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-sm"
-                        >
-                          Update Status
-                        </button>
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => {
+                              setUpdatingOrder(o);
+                              setNewStatus(o.status);
+                              setRiderName(o.assignedRider?.name || 'Emmanuel Nshimiyimana');
+                              setRiderPhone(o.assignedRider?.phone || '+250 788 777 999');
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-sm"
+                          >
+                            Update Status
+                          </button>
+                          {currentUser?.role === 'admin' && (
+                            <button
+                              onClick={() => handleDeleteOrder(o.id, o.orderNumber)}
+                              title="Delete Order"
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950 text-slate-300 hover:text-rose-400 transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1041,13 +1125,22 @@ export const AdminDashboard: React.FC = () => {
               />
             </div>
 
-            <button
-              onClick={() => handleExportCSV(usersList, 'DG_Rwanda_Users_Export')}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-200 font-semibold"
-            >
-              <Download className="w-3.5 h-3.5 text-amber-400" />
-              <span>Export Users to CSV</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsAddUserModal(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-md transition-all shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add User</span>
+              </button>
+              <button
+                onClick={() => handleExportCSV(usersList, 'DG_Rwanda_Users_Export')}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-xs text-slate-200 font-semibold shrink-0"
+              >
+                <Download className="w-3.5 h-3.5 text-amber-400" />
+                <span>Export Users to CSV</span>
+              </button>
+            </div>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
@@ -1142,6 +1235,13 @@ export const AdminDashboard: React.FC = () => {
                             {currentUser?.role === 'admin' && (
                               <>
                                 <button
+                                  onClick={() => setEditingUser(usr)}
+                                  title="Edit User Profile (Name, Phone, Email, Location)"
+                                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
                                   onClick={() => handleToggleUserRole(usr)}
                                   title="Toggle User Role (Customer -> Manager -> Admin)"
                                   className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] font-semibold border border-slate-700"
@@ -1157,6 +1257,13 @@ export const AdminDashboard: React.FC = () => {
                                   }`}
                                 >
                                   {usr.status === 'active' ? 'Suspend' : 'Activate'}
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteUser(usr)}
+                                  title="Delete User from Database"
+                                  className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950 text-slate-300 hover:text-rose-400 transition-colors"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                               </>
                             )}
@@ -2228,6 +2335,109 @@ export const AdminDashboard: React.FC = () => {
           }}
           onSave={handleSaveProduct}
         />
+      )}
+
+      {/* MODAL: Edit User (Admin privilege) */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-5 text-slate-100 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-amber-400" />
+                <h4 className="font-bold text-white text-base">Edit User Account</h4>
+              </div>
+              <button onClick={() => setEditingUser(null)} className="text-slate-400 hover:text-white">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditUser} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-400 mb-1 font-semibold">Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={editingUser.name}
+                  onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1 font-semibold">Email Address *</label>
+                <input
+                  type="email"
+                  required
+                  value={editingUser.email}
+                  onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1 font-semibold">Phone Number</label>
+                <input
+                  type="tel"
+                  value={editingUser.phone}
+                  onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-400 mb-1 font-semibold">Account Role</label>
+                  <select
+                    value={editingUser.role}
+                    onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value as any })}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white"
+                  >
+                    <option value="customer">Customer</option>
+                    <option value="manager">Store Manager</option>
+                    <option value="admin">Administrator</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-400 mb-1 font-semibold">Status</label>
+                  <select
+                    value={editingUser.status}
+                    onChange={(e) => setEditingUser({ ...editingUser, status: e.target.value as any })}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white"
+                  >
+                    <option value="active">Active</option>
+                    <option value="suspended">Suspended</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 mb-1 font-semibold">District</label>
+                <input
+                  type="text"
+                  value={editingUser.district || ''}
+                  onChange={(e) => setEditingUser({ ...editingUser, district: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  className="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-300 font-semibold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-xl bg-amber-500 text-slate-950 font-black"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

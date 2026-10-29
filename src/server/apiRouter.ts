@@ -666,6 +666,15 @@ apiRouter.put('/orders/:id/status', requireAdminOrManager, (req: Request, res: R
   return res.json({ message: 'Order status updated in database', order: updatedOrder });
 });
 
+apiRouter.delete('/orders/:id', requireAdminOnly, (req: Request, res: Response) => {
+  const { id } = req.params;
+  const deleted = db.deleteOrder(id);
+  if (!deleted) {
+    return res.status(404).json({ error: 'Order not found in database' });
+  }
+  return res.json({ message: 'Order deleted from database', order: deleted });
+});
+
 // ----------------------------------------------------
 // Admin Metrics & Settings
 // ----------------------------------------------------
