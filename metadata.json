@@ -1,0 +1,6 @@
+{
+  "name": "D&G E-Commerce Rwanda",
+  "description": "Cross-platform mobile e-commerce application and comprehensive admin dashboard for D&G Rwamagana, Rwanda with full REST API, multilingual support, and order tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
