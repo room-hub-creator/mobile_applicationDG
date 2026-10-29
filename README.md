@@ -1,8 +1,32 @@
-# D&G Rwanda E-Commerce Platform
+# D&G Rwanda E-Commerce Platform & Expo Go Mobile App 🇷🇼📱
 
-A production-ready mobile-responsive e-commerce application and comprehensive administrative management system built for D&G in Rwamagana, Rwanda.
+A production-ready mobile-responsive e-commerce web platform and a native **Expo Go Mobile Application** with comprehensive administrative management built for D&G Rwanda.
 
-## Features
+---
+
+## 📱 How to Run on Mobile via Expo Go
+
+You can run the native mobile app on any physical Android or iOS device using **Expo Go**:
+
+### 1. Install Expo Go
+- **Android**: Install [Expo Go on Google Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent)
+- **iPhone / iPad**: Install [Expo Go on App Store](https://apps.apple.com/app/expo-go/id982107779)
+
+### 2. Launch Expo
+```bash
+# Option A: From project root
+npm run expo
+
+# Option B: Direct
+cd mobile && npx expo start
+```
+*(Tip: If your phone is on cellular or a different network, run `npx expo start --tunnel`)*
+
+### 3. Scan the QR Code
+- **Android**: Open **Expo Go**, tap **"Scan QR code"**, and point at the QR code in your computer terminal.
+- **iPhone**: Open the default **Camera app**, point at the terminal QR code, and tap the **"Open in Expo Go"** banner.
+
+---
 
 - **Storefront & Mobile Experience**:
   - Browse categorized catalog (Beverages, Fresh Food, Electronics, Home & Living, Fashion, Bakery, Cosmetics).
